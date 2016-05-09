@@ -1,0 +1,2 @@
+defmodule WechatMP do
+end
