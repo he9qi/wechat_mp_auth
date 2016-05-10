@@ -57,9 +57,8 @@ defmodule WechatMP.Client do
 
   @spec get_component_access_token(t, params) :: {:ok, ComponentAccessToken.t} | {:error, Error.t}
   def get_component_access_token(client, params \\ []) do
-    client = client |> client.strategy.get_component_access_token(params)
-
-    case Request.request(:post, "#{client.site}/component/api_component_token", client.params) do
+    {client, url} = component_access_token_url(client, params)
+    case Request.request(:post, url, client.params) do
       {:ok, response} -> {:ok, ComponentAccessToken.new(response.body, client)}
       {:error, error} -> {:error, error}
     end
@@ -86,6 +85,20 @@ defmodule WechatMP.Client do
     %{client | params: Map.merge(client.params, params)}
   end
 
+  defp to_url(client, :component_access_token_url) do
+    {client, endpoint(client, client.component_access_token_url)}
+  end
+
+  defp component_access_token_url(client, params) do
+    client
+      |> client.strategy.get_component_access_token(params)
+      |> to_url(:component_access_token_url)
+  end
+
   defp param_key(binary) when is_binary(binary), do: binary
   defp param_key(atom) when is_atom(atom), do: Atom.to_string(atom)
+
+  defp endpoint(client, <<"/"::utf8, _::binary>> = endpoint),
+    do: client.site <> endpoint
+  defp endpoint(_client, endpoint), do: endpoint
 end
