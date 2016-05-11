@@ -6,6 +6,7 @@ defmodule WechatMP.Strategy.AuthCodeTest do
 
   alias WechatMP.Client
   alias WechatMP.ComponentAccessToken
+  alias WechatMP.AuthorizerAccessToken
   alias WechatMP.Strategy.AuthCode
 
   setup do
@@ -53,7 +54,7 @@ defmodule WechatMP.Strategy.AuthCodeTest do
       assert conn.request_path == "/component/api_create_preauthcode"
       assert conn.method == "POST"
 
-      {_ok, body, conn} = Plug.Conn.read_body(conn)
+      {:ok, body, conn} = Plug.Conn.read_body(conn)
       body = Poison.decode!(body)# URI.decode_query(body)
 
       assert body["component_appid"] == client.client_id
@@ -65,5 +66,40 @@ defmodule WechatMP.Strategy.AuthCodeTest do
       AuthCode.get_pre_auth_code(client, %ComponentAccessToken{access_token: access_token})
     assert pre_auth_code == "pre-auth-code-1234"
     assert expires_in == 600
+  end
+
+  test "get_authorizer_access_token", %{client: client, server: server} do
+    authorization_code = "auth-code-123"
+    component_access_token = "component-access-token-1234"
+    authorizer_appid = "auth-appid-123"
+    authorizer_access_token = "authorizer-access-token-1234"
+    authorizer_refresh_token = "authorizer-refresh-token-1234"
+
+    Bypass.expect server, fn conn ->
+      assert conn.request_path == "/component/api_query_auth"
+      assert conn.method == "POST"
+
+      {:ok, body, conn} = Plug.Conn.read_body(conn)
+      body = Poison.decode!(body)# URI.decode_query(body)
+
+      assert body["component_appid"] == client.client_id
+      assert body["authorization_code"] == "auth-code-123"
+
+      send_resp(conn, 302, ~s({
+          "authorization_info":{
+            "authorizer_appid": "#{authorizer_appid}",
+            "authorizer_access_token": "#{authorizer_access_token}",
+            "expires_in": 7200,
+            "authorizer_refresh_token": "#{authorizer_refresh_token}"
+          }
+        }))
+    end
+
+    list = [authorization_code: authorization_code, component_access_token: component_access_token]
+    assert {:ok, %AuthorizerAccessToken{} = token} = Client.get_authorizer_access_token(client, list)
+    assert token.access_token == authorizer_access_token
+    assert token.refresh_token == authorizer_refresh_token
+    assert token.appid == authorizer_appid
+    assert token.client != nil
   end
 end

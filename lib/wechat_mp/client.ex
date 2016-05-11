@@ -8,34 +8,38 @@ defmodule WechatMP.Client do
   alias WechatMP.Client
   alias WechatMP.Request
   alias WechatMP.ComponentAccessToken
+  alias WechatMP.AuthorizerAccessToken
 
-  @type strategy                   :: module
-  @type client_id                  :: binary
-  @type client_secret              :: binary
-  @type site                       :: binary
-  @type component_access_token_url :: binary
-  @type pre_auth_code_url          :: binary
-  @type authorize_url              :: binary
-  @type redirect_uri               :: binary
-  @type param                      :: binary | %{binary => param} | [param]
-  @type params                     :: %{binary => param}
+  @type strategy                    :: module
+  @type client_id                   :: binary
+  @type client_secret               :: binary
+  @type site                        :: binary
+  @type component_access_token_url  :: binary
+  @type authorizer_access_token_url :: binary
+  @type pre_auth_code_url           :: binary
+  @type authorize_url               :: binary
+  @type redirect_uri                :: binary
+  @type param                       :: binary | %{binary => param} | [param]
+  @type params                      :: %{binary => param}
 
   @type t :: %__MODULE__{
               strategy:      strategy,
               client_id:     client_id,
               client_secret: client_secret,
               site:          site,
-              component_access_token_url: component_access_token_url,
-              pre_auth_code_url:          pre_auth_code_url,
-              authorize_url:              authorize_url,
-              redirect_uri:               redirect_uri,
-              params:                     params}
+              component_access_token_url:   component_access_token_url,
+              authorizer_access_token_url:  authorizer_access_token_url,
+              pre_auth_code_url:            pre_auth_code_url,
+              authorize_url:                authorize_url,
+              redirect_uri:                 redirect_uri,
+              params:                       params}
 
   defstruct strategy: WechatMP.Strategy.AuthCode,
             client_id: "",
             client_secret: "",
             site: "",
             authorize_url: "https://mp.weixin.qq.com/cgi-bin/componentloginpage",
+            authorizer_access_token_url: "/component/api_query_auth",
             component_access_token_url: "/component/api_component_token",
             pre_auth_code_url: "/component/api_create_preauthcode",
             redirect_uri: "",
@@ -60,6 +64,14 @@ defmodule WechatMP.Client do
   """
   @spec new(Keyword.t) :: t
   def new(opts), do: struct(__MODULE__, opts)
+
+  def get_authorizer_access_token(client, params) do
+    {client, url} = authorizer_access_token_url(client, params)
+    case Request.request(:post, url, client.params) do
+      {:ok, response} -> {:ok, AuthorizerAccessToken.new(response.body, client)}
+      {:error, error} -> {:error, error}
+    end
+  end
 
   @doc """
   Initializes an `WechatMP.ComponentAccessToken` struct by making a request to the token
@@ -129,11 +141,22 @@ defmodule WechatMP.Client do
     url = endpoint(client, client.authorize_url) <> "?" <> URI.encode_query(params)
     {client, url}
   end
+  defp to_url(client, :authorizer_access_token_url) do
+    params = Map.take(client.params, ["component_access_token"])
+    url = endpoint(client, client.authorizer_access_token_url) <> "?" <> URI.encode_query(params)
+    {client, url}
+  end
 
   defp component_access_token_url(client, params) do
     client
       |> client.strategy.get_component_access_token_params(params)
       |> to_url(:component_access_token_url)
+  end
+
+  defp authorizer_access_token_url(client, params) do
+    client
+      |> client.strategy.get_authorizer_access_token_params(params)
+      |> to_url(:authorizer_access_token_url)
   end
 
   defp param_key(binary) when is_binary(binary), do: binary
