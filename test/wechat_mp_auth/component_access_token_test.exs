@@ -7,7 +7,7 @@ defmodule WechatMPAuth.ComponentAccessTokenTest do
 
   setup do
     server = Bypass.open
-    client = build_client(site: bypass_server(server), client_id: "clientId")
+    client = build_client(site: bypass_server(server))
     {:ok, client: client, server: server}
   end
 
