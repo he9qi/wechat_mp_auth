@@ -51,6 +51,13 @@ defmodule WechatMP.ComponentAccessToken do
     do: request(:post, token, url, body)
 
   @doc """
+  Makes a `GET` request to the given URL using the `WechatMP.ComponentAccessToken`.
+  """
+  @spec get(t, binary, body) :: {:ok, Response.t} | {:error, Error.t}
+  def get(token, url, body \\ ""),
+    do: request(:get, token, url, "")
+
+  @doc """
   Makes a request of given type to the given URL using the `WechatMP.ComponentAccessToken`.
   """
   @spec request(atom, t, binary, body) :: {:ok, Response.t} | {:error, Error.t}
@@ -60,18 +67,6 @@ defmodule WechatMP.ComponentAccessToken do
       {:ok, response} -> {:ok, response}
       {:error, error} -> {:error, error}
     end
-  end
-
-  @doc """
-  Fetch authorizer information using the `WechatMP.ComponentAccessToken`.
-  """
-  def get_authorizer_info(token, authorizer_appid) do
-    url = "/component/api_get_authorizer_info?component_access_token=#{token.access_token}"
-    params = %{
-      authorizer_appid: authorizer_appid,
-      component_appid: token.client.client_id
-    }
-    token |> post(url, params)
   end
 
   defp process_url(token, url) do
