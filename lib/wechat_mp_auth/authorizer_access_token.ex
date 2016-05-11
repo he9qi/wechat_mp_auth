@@ -1,6 +1,6 @@
-defmodule WechatMP.AuthorizerAccessToken do
-  alias WechatMP.Client
-  import WechatMP.Util
+defmodule WechatMPAuth.AuthorizerAccessToken do
+  alias WechatMPAuth.Client
+  import WechatMPAuth.Util
 
   @type access_token  :: binary
   @type refresh_token :: binary

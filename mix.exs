@@ -2,7 +2,7 @@ defmodule WechatMp.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :wechat_mp,
+    [app: :wechat_mp_auth,
      version: "0.0.1",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,

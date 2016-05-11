@@ -1,14 +1,14 @@
-defmodule WechatMP.Response do
+defmodule WechatMPAuth.Response do
   @moduledoc """
-  Defines the `WechatMP.Response` struct which is created from the HTTP responses
-  made by the `WechatMP.AccessToken` module.
+  Defines the `WechatMPAuth.Response` struct which is created from the HTTP responses
+  made by the `WechatMPAuth.AccessToken` module.
   ## Struct fields
   * `status_code` - HTTP response status code
   * `headers` - HTTP response headers
   * `body` - Parsed HTTP response body (based on "Content-Type" header)
   """
 
-  import WechatMP.Util
+  import WechatMPAuth.Util
 
   @type status_code :: integer
   @type headers     :: map

@@ -1,9 +1,9 @@
-defmodule WechatMP.ComponentAccessTokenTest do
+defmodule WechatMPAuth.ComponentAccessTokenTest do
   use ExUnit.Case, async: true
   use Plug.Test
 
-  import WechatMP.TestHelpers
-  import WechatMP.ComponentAccessToken
+  import WechatMPAuth.TestHelpers
+  import WechatMPAuth.ComponentAccessToken
 
   setup do
     server = Bypass.open

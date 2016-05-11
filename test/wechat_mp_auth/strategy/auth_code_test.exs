@@ -1,13 +1,13 @@
-defmodule WechatMP.Strategy.AuthCodeTest do
+defmodule WechatMPAuth.Strategy.AuthCodeTest do
   use ExUnit.Case, async: true
   use Plug.Test
 
-  import WechatMP.TestHelpers
+  import WechatMPAuth.TestHelpers
 
-  alias WechatMP.Client
-  alias WechatMP.ComponentAccessToken
-  alias WechatMP.AuthorizerAccessToken
-  alias WechatMP.Strategy.AuthCode
+  alias WechatMPAuth.Client
+  alias WechatMPAuth.ComponentAccessToken
+  alias WechatMPAuth.AuthorizerAccessToken
+  alias WechatMPAuth.Strategy.AuthCode
 
   setup do
     server = Bypass.open

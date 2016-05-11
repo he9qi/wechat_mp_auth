@@ -1,7 +1,7 @@
-defmodule WechatMP.UtilTest do
+defmodule WechatMPAuth.UtilTest do
   use ExUnit.Case, async: true
 
-  alias WechatMP.Util
+  alias WechatMPAuth.Util
 
   test "parses correct mime types" do
     assert "application/x-www-form-urlencoded" == Util.content_type([
@@ -14,7 +14,7 @@ defmodule WechatMP.UtilTest do
   end
 
   test "raises error when content type is not correct" do
-    assert_raise WechatMP.Error, fn ->
+    assert_raise WechatMPAuth.Error, fn ->
       Util.content_type([{"content-type", "trash; trash"}])
     end
   end

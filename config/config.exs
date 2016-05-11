@@ -10,11 +10,11 @@ use Mix.Config
 
 # You can configure for your application as:
 #
-#     config :wechat_mp, key: :value
+#     config :wechat_mp_auth, key: :value
 #
 # And access this configuration in your application as:
 #
-#     Application.get_env(:wechat_mp, :key)
+#     Application.get_env(:wechat_mp_auth, :key)
 #
 # Or configure a 3rd-party app:
 #
