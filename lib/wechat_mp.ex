@@ -1,2 +1,2 @@
-defmodule WechatMP do
+defmodule WechatMPAuth do
 end

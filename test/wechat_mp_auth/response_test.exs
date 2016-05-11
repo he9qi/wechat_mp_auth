@@ -1,7 +1,7 @@
-defmodule WechatMP.ResponseTest do
+defmodule WechatMPAuth.ResponseTest do
   use ExUnit.Case, async: true
 
-  alias WechatMP.Response
+  alias WechatMPAuth.Response
 
   test "Constructs response" do
     headers = [{"content-type", "application/json"}]

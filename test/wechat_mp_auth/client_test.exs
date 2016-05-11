@@ -1,9 +1,9 @@
-defmodule WechatMP.ClientTest do
+defmodule WechatMPAuth.ClientTest do
   use ExUnit.Case, async: true
   use Plug.Test
 
-  import WechatMP.Client
-  import WechatMP.TestHelpers
+  import WechatMPAuth.Client
+  import WechatMPAuth.TestHelpers
 
   setup do
     server = Bypass.open

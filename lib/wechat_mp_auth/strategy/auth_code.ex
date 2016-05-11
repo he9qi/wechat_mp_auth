@@ -1,16 +1,16 @@
-defmodule WechatMP.Strategy.AuthCode do
+defmodule WechatMPAuth.Strategy.AuthCode do
 
-  use WechatMP.Strategy
-  import WechatMP.Util
+  use WechatMPAuth.Strategy
+  import WechatMPAuth.Util
 
-  alias WechatMP.ComponentAccessToken
-  alias WechatMP.Request
+  alias WechatMPAuth.ComponentAccessToken
+  alias WechatMPAuth.Request
 
   def get_component_access_token_params(client, params) do
     {verify_ticket, params} = Keyword.pop(params, :verify_ticket)
 
     unless verify_ticket do
-      raise WechatMP.Error, reason: "Missing required key `verify_ticket` for `#{inspect __MODULE__}`"
+      raise WechatMPAuth.Error, reason: "Missing required key `verify_ticket` for `#{inspect __MODULE__}`"
     end
 
     client

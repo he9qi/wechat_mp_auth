@@ -1,8 +1,8 @@
-defmodule WechatMP.ComponentAccessToken do
-  alias WechatMP.Client
-  import WechatMP.Util
+defmodule WechatMPAuth.ComponentAccessToken do
+  alias WechatMPAuth.Client
+  import WechatMPAuth.Util
 
-  alias WechatMP.Request
+  alias WechatMPAuth.Request
 
   @standard ["component_access_token", "expires_in"]
 
@@ -44,21 +44,21 @@ defmodule WechatMP.ComponentAccessToken do
   def expires_at(int), do: unix_now + int
 
   @doc """
-  Makes a `POST` request to the given URL using the `WechatMP.ComponentAccessToken`.
+  Makes a `POST` request to the given URL using the `WechatMPAuth.ComponentAccessToken`.
   """
   @spec post(t, binary, body) :: {:ok, Response.t} | {:error, Error.t}
   def post(token, url, body \\ ""),
     do: request(:post, token, url, body)
 
   @doc """
-  Makes a `GET` request to the given URL using the `WechatMP.ComponentAccessToken`.
+  Makes a `GET` request to the given URL using the `WechatMPAuth.ComponentAccessToken`.
   """
-  @spec get(t, binary, body) :: {:ok, Response.t} | {:error, Error.t}
-  def get(token, url, body \\ ""),
+  @spec get(t, binary) :: {:ok, Response.t} | {:error, Error.t}
+  def get(token, url),
     do: request(:get, token, url, "")
 
   @doc """
-  Makes a request of given type to the given URL using the `WechatMP.ComponentAccessToken`.
+  Makes a request of given type to the given URL using the `WechatMPAuth.ComponentAccessToken`.
   """
   @spec request(atom, t, binary, body) :: {:ok, Response.t} | {:error, Error.t}
   def request(method, token, url, body \\ "") do

@@ -1,5 +1,5 @@
-defmodule WechatMPTest do
+defmodule WechatMPAuthTest do
   use ExUnit.Case
-  doctest WechatMP
+  doctest WechatMPAuth
 
 end

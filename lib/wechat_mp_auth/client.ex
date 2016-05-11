@@ -1,14 +1,14 @@
-defmodule WechatMP.Client do
+defmodule WechatMPAuth.Client do
 
   @moduledoc """
-  This module defines the `WechatMP.Client` struct and is responsible for building
+  This module defines the `WechatMPAuth.Client` struct and is responsible for building
   and establishing a request for an component access token.
   """
 
-  alias WechatMP.Client
-  alias WechatMP.Request
-  alias WechatMP.ComponentAccessToken
-  alias WechatMP.AuthorizerAccessToken
+  alias WechatMPAuth.Client
+  alias WechatMPAuth.Request
+  alias WechatMPAuth.ComponentAccessToken
+  alias WechatMPAuth.AuthorizerAccessToken
 
   @type strategy                    :: module
   @type client_id                   :: binary
@@ -34,7 +34,7 @@ defmodule WechatMP.Client do
               redirect_uri:                 redirect_uri,
               params:                       params}
 
-  defstruct strategy: WechatMP.Strategy.AuthCode,
+  defstruct strategy: WechatMPAuth.Strategy.AuthCode,
             client_id: "",
             client_secret: "",
             site: "",
@@ -46,10 +46,10 @@ defmodule WechatMP.Client do
             params: %{}
 
   @doc """
-  Builds a new WechatMP client struct using the `opts` provided.
+  Builds a new WechatMPAuth client struct using the `opts` provided.
   ## Client struct fields
   * `strategy` - a module that implements the Wechat MP OAuth strategy,
-    defaults to `WechatMP.Strategy.AuthCode`
+    defaults to `WechatMPAuth.Strategy.AuthCode`
   * `client_id` - the client_id for the Wechat Component
   * `client_secret` - the client_secret for the Wechat Component
   * `site` - the OAuth2 provider site host
@@ -74,13 +74,13 @@ defmodule WechatMP.Client do
   end
 
   @doc """
-  Initializes an `WechatMP.ComponentAccessToken` struct by making a request to the token
+  Initializes an `WechatMPAuth.ComponentAccessToken` struct by making a request to the token
   endpoint.
-  Returns an `WechatMP.ComponentAccessToken` struct that can then be used to access the
+  Returns an `WechatMPAuth.ComponentAccessToken` struct that can then be used to access the
   provider's RESTful API.
   ## Arguments
-  * `client` - a `WechatMP.Client` struct with the strategy to use, defaults to
-    `WechatMP.Strategy.AuthCode`
+  * `client` - a `WechatMPAuth.Client` struct with the strategy to use, defaults to
+    `WechatMPAuth.Strategy.AuthCode`
   * `params` - a keyword list of request parameters
   """
   @spec get_component_access_token(t, params) :: {:ok, ComponentAccessToken.t} | {:error, Error.t}
@@ -93,7 +93,7 @@ defmodule WechatMP.Client do
   end
 
   @doc """
-  Same as `get_component_access_token/4` but raises `WechatMP.Error` if an error occurs during the
+  Same as `get_component_access_token/4` but raises `WechatMPAuth.Error` if an error occurs during the
   request.
   """
   @spec get_component_access_token!(t, params) :: ComponentAccessToken.t | Error.t
@@ -117,7 +117,7 @@ defmodule WechatMP.Client do
   @doc """
   Set multiple params in the client in one call.
   """
-  @spec merge_params(t, WechatMP.params) :: t
+  @spec merge_params(t, WechatMPAuth.params) :: t
   def merge_params(client, params) do
     params = Enum.reduce(params, %{}, fn {k,v}, acc ->
       Map.put(acc, param_key(k), v)

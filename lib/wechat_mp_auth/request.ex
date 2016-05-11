@@ -1,12 +1,12 @@
-defmodule WechatMP.Request do
+defmodule WechatMPAuth.Request do
   @moduledoc false
 
   use HTTPoison.Base
 
-  import WechatMP.Util
+  import WechatMPAuth.Util
 
-  alias WechatMP.Error
-  alias WechatMP.Response
+  alias WechatMPAuth.Error
+  alias WechatMPAuth.Response
 
   def request(method, url, body \\ "", headers \\ [], opts \\ []) do
     content_type = content_type(headers)

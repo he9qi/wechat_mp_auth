@@ -1,4 +1,4 @@
-defmodule WechatMP.TestHelpers do
+defmodule WechatMPAuth.TestHelpers do
 
   import Plug.Conn
   import ExUnit.Assertions
@@ -56,18 +56,18 @@ defmodule WechatMP.TestHelpers do
   def build_client(opts \\ []) do
     default_client_opts
     |> Keyword.merge(opts)
-    |> WechatMP.Client.new()
+    |> WechatMPAuth.Client.new()
   end
 
-  def build_token(opts \\ [], %WechatMP.Client{} = client) do
+  def build_token(opts \\ [], %WechatMPAuth.Client{} = client) do
     default_token_opts
     |> Keyword.merge(opts)
     |> stringify_keys()
-    |> WechatMP.ComponentAccessToken.new(client)
+    |> WechatMPAuth.ComponentAccessToken.new(client)
   end
 
   defp get_config(key) do
-    Application.get_env(:wechat_mp, key)
+    Application.get_env(:wechat_mp_auth, key)
   end
 
   defp default_client_opts do
@@ -78,7 +78,7 @@ defmodule WechatMP.TestHelpers do
 
   defp default_token_opts do
     [component_access_token: "abcdefgh",
-     expires_at: WechatMP.Util.unix_now + 600]
+     expires_at: WechatMPAuth.Util.unix_now + 600]
   end
 
   defp stringify_keys(dict) do

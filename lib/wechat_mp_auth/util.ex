@@ -1,4 +1,4 @@
-defmodule WechatMP.Util do
+defmodule WechatMPAuth.Util do
   @moduledoc false
 
   def unix_now do
@@ -13,7 +13,7 @@ defmodule WechatMP.Util do
           {:ok, [{type, subtype, _}]} ->
             type <> "/" <> subtype
           error ->
-            raise WechatMP.Error, reason: error
+            raise WechatMPAuth.Error, reason: error
         end
       nil ->
         "application/json"
