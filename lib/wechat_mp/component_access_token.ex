@@ -25,6 +25,7 @@ defmodule WechatMP.ComponentAccessToken do
     {std, other} = Dict.split(response, @standard)
 
     struct __MODULE__, [
+      client:         client,
       access_token:   std["component_access_token"],
       expires_at:     (std["expires_in"] || other["expires"] |> expires_at())]
   end

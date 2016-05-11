@@ -24,4 +24,8 @@ defmodule WechatMP.Util do
     List.keyfind(headers, "Content-Type", 0) ||
     List.keyfind(headers, "content-type", 0)
   end
+
+  def endpoint(site, <<"/"::utf8, _::binary>> = endpoint),
+    do: site <> endpoint
+  def endpoint(_client, endpoint), do: endpoint
 end

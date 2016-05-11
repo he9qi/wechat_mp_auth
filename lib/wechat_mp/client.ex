@@ -15,6 +15,8 @@ defmodule WechatMP.Client do
   @type site                       :: binary
   @type component_access_token_url :: binary
   @type pre_auth_code_url          :: binary
+  @type authorize_url              :: binary
+  @type redirect_uri               :: binary
   @type param                      :: binary | %{binary => param} | [param]
   @type params                     :: %{binary => param}
 
@@ -25,14 +27,18 @@ defmodule WechatMP.Client do
               site:          site,
               component_access_token_url: component_access_token_url,
               pre_auth_code_url:          pre_auth_code_url,
-              params:        params}
+              authorize_url:              authorize_url,
+              redirect_uri:               redirect_uri,
+              params:                     params}
 
   defstruct strategy: WechatMP.Strategy.AuthCode,
             client_id: "",
             client_secret: "",
             site: "",
+            authorize_url: "https://mp.weixin.qq.com/cgi-bin/componentloginpage",
             component_access_token_url: "/component/api_component_token",
-            pre_auth_code_url: "component/api_create_preauthcode",
+            pre_auth_code_url: "/component/api_create_preauthcode",
+            redirect_uri: "",
             params: %{}
 
   @doc """
@@ -55,12 +61,34 @@ defmodule WechatMP.Client do
   @spec new(Keyword.t) :: t
   def new(opts), do: struct(__MODULE__, opts)
 
+  @doc """
+  Initializes an `WechatMP.ComponentAccessToken` struct by making a request to the token
+  endpoint.
+  Returns an `WechatMP.ComponentAccessToken` struct that can then be used to access the
+  provider's RESTful API.
+  ## Arguments
+  * `client` - a `WechatMP.Client` struct with the strategy to use, defaults to
+    `WechatMP.Strategy.AuthCode`
+  * `params` - a keyword list of request parameters
+  """
   @spec get_component_access_token(t, params) :: {:ok, ComponentAccessToken.t} | {:error, Error.t}
   def get_component_access_token(client, params \\ []) do
     {client, url} = component_access_token_url(client, params)
     case Request.request(:post, url, client.params) do
       {:ok, response} -> {:ok, ComponentAccessToken.new(response.body, client)}
       {:error, error} -> {:error, error}
+    end
+  end
+
+  @doc """
+  Same as `get_component_access_token/4` but raises `WechatMP.Error` if an error occurs during the
+  request.
+  """
+  @spec get_component_access_token!(t, params) :: ComponentAccessToken.t | Error.t
+  def get_component_access_token!(client, params \\ []) do
+    case get_component_access_token(client, params) do
+      {:ok, token} -> token
+      {:error, error} -> raise error
     end
   end
 
@@ -85,13 +113,26 @@ defmodule WechatMP.Client do
     %{client | params: Map.merge(client.params, params)}
   end
 
+  @doc """
+  Get authorize url to get authorized.
+  """
+  @spec get_authorize_url(t, list) :: {t, binary}
+  def get_authorize_url(client, params \\ []) do
+    client.strategy.authorize_url(client, params) |> to_url(:authorize_url)
+  end
+
   defp to_url(client, :component_access_token_url) do
     {client, endpoint(client, client.component_access_token_url)}
+  end
+  defp to_url(client, :authorize_url) do
+    params = Map.take(client.params, ["pre_auth_code", "component_appid", "redirect_uri"])
+    url = endpoint(client, client.authorize_url) <> "?" <> URI.encode_query(params)
+    {client, url}
   end
 
   defp component_access_token_url(client, params) do
     client
-      |> client.strategy.get_component_access_token(params)
+      |> client.strategy.get_component_access_token_params(params)
       |> to_url(:component_access_token_url)
   end
 
