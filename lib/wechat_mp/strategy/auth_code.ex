@@ -42,7 +42,7 @@ defmodule WechatMP.Strategy.AuthCode do
       |> to_url(:pre_auth_code_url)
   end
 
-  def authorize_url(client, [pre_auth_code: _] = params) do
+  def authorize_url(client, [pre_auth_code: _, component_access_token: _] = params) do
     client
       |> put_param(:component_appid, client.client_id)
       |> put_param(:redirect_uri, client.redirect_uri)
@@ -51,7 +51,9 @@ defmodule WechatMP.Strategy.AuthCode do
   def authorize_url(client, params) do
     component_access_token = get_component_access_token!(client, params)
     {:ok, %{"pre_auth_code" => pre_auth_code}} = get_pre_auth_code(client, component_access_token)
-    authorize_url(client, [pre_auth_code: pre_auth_code])
+
+    access_token = component_access_token.access_token
+    authorize_url(client, [pre_auth_code: pre_auth_code, component_access_token: access_token])
   end
 
   defp to_url(client, :pre_auth_code_url) do

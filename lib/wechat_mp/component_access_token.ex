@@ -2,10 +2,13 @@ defmodule WechatMP.ComponentAccessToken do
   alias WechatMP.Client
   import WechatMP.Util
 
+  alias WechatMP.Request
+
   @standard ["component_access_token", "expires_in"]
 
   @type access_token  :: binary
   @type expires_at    :: integer
+  @type body          :: binary | %{}
 
   @type t :: %__MODULE__{
               access_token: access_token,
@@ -40,4 +43,42 @@ defmodule WechatMP.ComponentAccessToken do
   end
   def expires_at(int), do: unix_now + int
 
+  @doc """
+  Makes a `POST` request to the given URL using the `WechatMP.ComponentAccessToken`.
+  """
+  @spec post(t, binary, body) :: {:ok, Response.t} | {:error, Error.t}
+  def post(token, url, body \\ ""),
+    do: request(:post, token, url, body)
+
+  @doc """
+  Makes a request of given type to the given URL using the `WechatMP.ComponentAccessToken`.
+  """
+  @spec request(atom, t, binary, body) :: {:ok, Response.t} | {:error, Error.t}
+  def request(method, token, url, body \\ "") do
+    url = process_url(token, url)
+    case Request.request(method, url, body) do
+      {:ok, response} -> {:ok, response}
+      {:error, error} -> {:error, error}
+    end
+  end
+
+  @doc """
+  Fetch authorizer information using the `WechatMP.ComponentAccessToken`.
+  """
+  def get_authorizer_info(token, authorizer_appid) do
+    url = "/component/api_get_authorizer_info?component_access_token=#{token.access_token}"
+    params = %{
+      authorizer_appid: authorizer_appid,
+      component_appid: token.client.client_id
+    }
+    token |> post(url, params)
+  end
+
+  defp process_url(token, url) do
+    case String.downcase(url) do
+      <<"http://"::utf8, _::binary>> -> url
+      <<"https://"::utf8, _::binary>> -> url
+      _ -> token.client.site <> url
+    end
+  end
 end

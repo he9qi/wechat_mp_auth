@@ -37,6 +37,7 @@ defmodule WechatMP.ClientTest do
       redirect_uri: redirect_uri
     }
     assert url == client.authorize_url <> "?" <> URI.encode_query(query_params)
+    assert client.params["component_access_token"] == access_token
   end
 
 end
