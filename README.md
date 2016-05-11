@@ -1,6 +1,6 @@
 # WechatMP
 
-**WeChat Media Platform OAuth** [微信第三方平台授权](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1453779503&token=0fbba0141afd0e79e61025b7a0cbf63a1850251e&lang=zh_CN)
+**WeChat Media Platform Authentication** [微信第三方平台授权](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1453779503&token=0fbba0141afd0e79e61025b7a0cbf63a1850251e&lang=zh_CN)
 
 ## Installation
 
