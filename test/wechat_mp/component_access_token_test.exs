@@ -41,7 +41,7 @@ defmodule WechatMP.ComponentAccessTokenTest do
       }))
     end
 
-    component_access_token = new(access_token, client)
+    component_access_token = build_token([component_access_token: access_token], client)
     assert {:ok, response } = component_access_token
       |> get_authorizer_info(authorizer_appid)
 

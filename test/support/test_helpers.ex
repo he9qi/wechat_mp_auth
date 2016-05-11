@@ -63,7 +63,7 @@ defmodule WechatMP.TestHelpers do
     default_token_opts
     |> Keyword.merge(opts)
     |> stringify_keys()
-    |> WechatMP.AccessToken.new(client)
+    |> WechatMP.ComponentAccessToken.new(client)
   end
 
   defp get_config(key) do
@@ -77,9 +77,8 @@ defmodule WechatMP.TestHelpers do
   end
 
   defp default_token_opts do
-    [access_token: "abcdefgh",
-     expires_at: WechatMP.Util.unix_now + 600,
-     token_type: "Bearer"]
+    [component_access_token: "abcdefgh",
+     expires_at: WechatMP.Util.unix_now + 600]
   end
 
   defp stringify_keys(dict) do
