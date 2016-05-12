@@ -59,4 +59,4 @@
 
 ## License
 
-Please see [LICENSE](https://github.com/he9qi/ueberauth_weibo/blob/master/LICENSE) for licensing details.
+Please see [LICENSE](https://github.com/he9qi/wechat_mp_auth/blob/master/LICENSE) for licensing details.
