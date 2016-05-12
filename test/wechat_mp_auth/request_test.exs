@@ -67,4 +67,20 @@ defmodule WechatMPAuth.RequestTest do
     assert resp.body == "{\"success\":true}"
   end
 
+  test "Request POST with application/x-www-form-urlencoded", %{server: server} do
+    bypass server, "POST", "/", [accept: "application/x-www-form-urlencoded"], fn conn ->
+      assert conn.method == "POST"
+      assert conn.body_params == %{"token" => "123"}
+
+      json(conn, 200, ~s({"success":true}))
+    end
+
+    assert {:ok, resp} = Request.request(:post,
+      "http://localhost:#{server.port}/",
+      %{"token": 123},
+      [{"content-type", "application/x-www-form-urlencoded"}, {"accept", "application/x-www-form-urlencoded"}])
+
+    assert resp.body == "{\"success\":true}"
+  end
+
 end

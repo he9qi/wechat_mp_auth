@@ -23,9 +23,6 @@ defmodule WechatMPAuth.Strategy.AuthCodeTest do
       assert conn.request_path == "/component/api_component_token"
       assert conn.method == "POST"
 
-      # Note: wechat doesn't care what content-type request has
-      # assert get_req_header(conn, "content-type") == ["application/json"]
-
       {:ok, body, conn} = Plug.Conn.read_body(conn)
       body = Poison.decode!(body)# URI.decode_query(body)
 

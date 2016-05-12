@@ -81,6 +81,18 @@ defmodule WechatMPAuth.ComponentAccessTokenTest do
     assert resp.body == %{"success" => true}
   end
 
+  test "POST with empty body", %{server: server, access_token: access_token} do
+    bypass server, "POST", "/", fn conn ->
+      send_resp(conn, 200, ~s({"success":true}))
+    end
+
+    assert {:ok, resp} = post(access_token, "/")
+    assert resp.body == %{"success" => true}
+
+    resp = post!(access_token, "/")
+    assert resp.body == %{"success" => true}
+  end
+
   test "Request GET", %{server: server, access_token: access_token} do
     bypass server, "GET", "/", fn conn ->
       assert conn.host == "localhost"
