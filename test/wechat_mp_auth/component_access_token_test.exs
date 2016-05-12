@@ -37,21 +37,23 @@ defmodule WechatMPAuth.ComponentAccessTokenTest do
     assert component_access_token.client
   end
 
-  test "GET", %{client: client, server: server} do
-    access_token = new("access-token-1234", client)
-
+  test "GET", %{server: server, access_token: access_token} do
     bypass server, "GET", "/", fn conn ->
       send_resp(conn, 200, ~s({"success":true}))
     end
-
     assert {:ok, resp} = get(access_token, "/")
-
     assert resp.body == %{"success" => true}
   end
 
-  test "POST", %{client: client, server: server} do
-    access_token = new("access-token-1234", client)
+  test "GET!", %{server: server, access_token: access_token} do
+    bypass server, "GET", "/", fn conn ->
+      send_resp(conn, 200, ~s({"success":true}))
+    end
+    resp = get!(access_token, "/")
+    assert resp.body == %{"success" => true}
+  end
 
+  test "POST", %{server: server, access_token: access_token} do
     bypass server, "POST", "/", fn conn ->
       assert conn.method == "POST"
 
@@ -65,6 +67,20 @@ defmodule WechatMPAuth.ComponentAccessTokenTest do
     assert resp.body == %{"success" => true}
   end
 
+  test "POST!", %{server: server, access_token: access_token} do
+    bypass server, "POST", "/", fn conn ->
+      assert conn.method == "POST"
+
+      {:ok, body, _} = Plug.Conn.read_body(conn)
+      assert Poison.decode!(body) == %{"token" => 123}
+
+      send_resp(conn, 200, ~s({"success":true}))
+    end
+
+    resp = post!(access_token, "/", %{"token" => 123})
+    assert resp.body == %{"success" => true}
+  end
+
   test "Request GET", %{server: server, access_token: access_token} do
     bypass server, "GET", "/", fn conn ->
       assert conn.host == "localhost"
@@ -73,6 +89,15 @@ defmodule WechatMPAuth.ComponentAccessTokenTest do
     end
 
     assert {:ok, resp} = request(:get, access_token, "/", "")
+    assert resp.body == %{"success" => true}
+  end
+
+  test "Request GET!", %{server: server, access_token: access_token} do
+    bypass server, "GET", "/", fn conn ->
+      send_resp(conn, 200, ~s({"success":true}))
+    end
+
+    resp = request!(:get, access_token, "/", "")
     assert resp.body == %{"success" => true}
   end
 

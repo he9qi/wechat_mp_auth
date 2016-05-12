@@ -20,7 +20,6 @@ defmodule WechatMPAuth.TestHelpers do
       assert conn.method == method
       assert conn.request_path == path
       assert_accepts(conn, accept)
-      assert_token(conn, token)
 
       fun.(conn)
     end
@@ -40,11 +39,6 @@ defmodule WechatMPAuth.TestHelpers do
         _      -> accept
       end
     assert get_req_header(conn, "accept") == [mime]
-  end
-
-  defp assert_token(_conn, nil), do: :ok
-  defp assert_token(conn, token) do
-    assert get_req_header(conn, "authorization") == ["Bearer #{token.access_token}"]
   end
 
   def json(conn, status, body \\ []) do

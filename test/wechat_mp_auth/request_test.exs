@@ -20,6 +20,27 @@ defmodule WechatMPAuth.RequestTest do
     assert resp.body == %{"success" => true}
   end
 
+  test "Request GET Connection Failure", %{server: server} do
+    Bypass.down(server)
+
+    assert {:error, error} = Request.request(:get, "http://localhost:#{server.port}/")
+    assert error.reason == :econnrefused
+
+    Bypass.up(server)
+  end
+
+  test "Request GET Error Response", %{server: server} do
+    bypass server, "GET", "/", fn conn ->
+      send_resp(conn, 200, ~s<{
+        "errcode": 42001,
+        "errmsg": "access_token expired hint: [utxVxa0955vr19]"
+      }>)
+    end
+
+    assert {:ok, resp} = Request.request(:get, "http://localhost:#{server.port}/")
+    assert resp.body == %{"errcode" => 42001, "errmsg" => "access_token expired hint: [utxVxa0955vr19]"}
+  end
+
   test "Request GET!", %{server: server} do
     bypass server, "GET", "/", fn conn ->
       send_resp(conn, 200, ~s({"success":true}))
@@ -35,7 +56,7 @@ defmodule WechatMPAuth.RequestTest do
       assert conn.method == "POST"
       assert conn.body_params == %{"token" => 123}
 
-      send_resp(conn, 200, ~s({"success":true}))
+      json(conn, 200, ~s({"success":true}))
     end
 
     assert {:ok, resp} = Request.request(:post,
@@ -43,7 +64,7 @@ defmodule WechatMPAuth.RequestTest do
       %{"token": 123},
       [{"content-type", "application/json"}])
 
-    assert resp.body == %{"success" => true}
+    assert resp.body == "{\"success\":true}"
   end
 
 end
