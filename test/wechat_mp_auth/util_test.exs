@@ -3,6 +3,18 @@ defmodule WechatMPAuth.UtilTest do
 
   alias WechatMPAuth.Util
 
+  test "expires at is nil" do
+    assert nil == Util.expires_at(nil)
+  end
+
+  test "expires at is string" do
+    assert 1463017450 == Util.expires_at("1463017450")
+  end
+
+  test "expires at is not string" do
+    assert Util.unix_now + 100 == Util.expires_at(100)
+  end
+
   test "parses correct mime types" do
     assert "application/x-www-form-urlencoded" == Util.content_type([
       {"content-type", "application/x-www-form-urlencoded"}

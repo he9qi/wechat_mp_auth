@@ -6,6 +6,16 @@ defmodule WechatMPAuth.Util do
     (mega * 1_000_000) + sec
   end
 
+  @doc """
+  Returns a unix timestamp based on now + expires_at (in seconds)
+  """
+  def expires_at(nil), do: nil
+  def expires_at(val) when is_binary(val) do
+    {int, _} = Integer.parse(val)
+    int
+  end
+  def expires_at(int), do: unix_now + int
+
   def content_type(headers) do
     case get_content_type(headers) do
       {_, content_type} ->

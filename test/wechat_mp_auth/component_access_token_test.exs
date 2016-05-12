@@ -8,7 +8,83 @@ defmodule WechatMPAuth.ComponentAccessTokenTest do
   setup do
     server = Bypass.open
     client = build_client(site: bypass_server(server))
-    {:ok, client: client, server: server}
+    access_token = new("access-token-1234", client)
+    {:ok, client: client, server: server, access_token: access_token}
+  end
+
+  test "new component_access_token from string", %{client: client} do
+    access_token = "component-access-token-1234"
+
+    component_access_token = new(access_token, client)
+
+    assert component_access_token.access_token == access_token
+    assert component_access_token.client
+  end
+
+  test "new component_access_token from map", %{client: client} do
+    access_token = "component-access-token-1234"
+    expires_in = 600
+
+    params = %{
+      "component_access_token" => access_token,
+      "expires_in" => expires_in
+    }
+
+    component_access_token = new(params, client)
+
+    assert component_access_token.access_token == access_token
+    assert component_access_token.expires_at
+    assert component_access_token.client
+  end
+
+  test "GET", %{client: client, server: server} do
+    access_token = new("access-token-1234", client)
+
+    bypass server, "GET", "/", fn conn ->
+      send_resp(conn, 200, ~s({"success":true}))
+    end
+
+    assert {:ok, resp} = get(access_token, "/")
+
+    assert resp.body == %{"success" => true}
+  end
+
+  test "POST", %{client: client, server: server} do
+    access_token = new("access-token-1234", client)
+
+    bypass server, "POST", "/", fn conn ->
+      assert conn.method == "POST"
+
+      {:ok, body, _} = Plug.Conn.read_body(conn)
+      assert Poison.decode!(body) == %{"token" => 123}
+
+      send_resp(conn, 200, ~s({"success":true}))
+    end
+
+    assert {:ok, resp} = post(access_token, "/", %{"token" => 123})
+    assert resp.body == %{"success" => true}
+  end
+
+  test "Request GET", %{server: server, access_token: access_token} do
+    bypass server, "GET", "/", fn conn ->
+      assert conn.host == "localhost"
+      assert conn.port == server.port
+      send_resp(conn, 200, ~s({"success":true}))
+    end
+
+    assert {:ok, resp} = request(:get, access_token, "/", "")
+    assert resp.body == %{"success" => true}
+  end
+
+  test "Request GET absolute URL", %{server: server, access_token: access_token} do
+    bypass server, "GET", "/", fn conn ->
+      assert conn.host == "localhost"
+      assert conn.port == server.port
+      send_resp(conn, 200, ~s({"success":true}))
+    end
+
+    assert {:ok, resp} = request(:get, access_token, "http://localhost:#{server.port}", "")
+    assert resp.body == %{"success" => true}
   end
 
   test "get_authorizer_info", %{client: client, server: server} do

@@ -1,7 +1,7 @@
 defmodule WechatMp.Mixfile do
   use Mix.Project
 
-  @version "0.0.3"
+  @version "0.0.1"
 
   def project do
     [app: :wechat_mp_auth,

@@ -1,4 +1,30 @@
 defmodule WechatMPAuth.ComponentAccessToken do
+  @moduledoc """
+  This module defines the `WechatMPAuth.ComponentAccessToken` struct and
+  provides functionality to make authorized requests to an WechatMPAuth provider
+  using the ComponentAccessToken returned by the provider.
+
+  The `WechatMPAuth.ComponentAccessToken` struct is created for you when you use the
+  `WechatMPAuth.Client.get_component_access_token`
+  ### Notes
+  * If a full url is given (e.g. "http://www.example.com/api/resource") then it
+  will use that otherwise you can specify an endpoint (e.g. "/api/resource") and
+  it will append it to the `Client.site`.
+  ### Examples
+  ```
+  token =  WechatMPAuth.ComponentAccessToken.new("abc123", %WechatMPAuth.Client{site: "www.example.com"})
+  case WechatMPAuth.ComponentAccessToken.get(token, "/some/resource") do
+    {:ok, %WechatMPAuth.Response{status_code: 401}} ->
+      "Not Good"
+    {:ok, %WechatMPAuth.Response{status_code: status_code, body: body}} when status_code in [200..299] ->
+      "Yay!!"
+    {:error, %WechatMPAuth.Error{reason: reason}} ->
+      reason
+  end
+  response = WechatMPAuth.ComponentAccessToken.get!(token, "/some/resource")
+  response = WechatMPAuth.ComponentAccessToken.post!(token, "/some/other/resources", %{foo: "bar"})
+```
+  """
   alias WechatMPAuth.Client
   import WechatMPAuth.Util
 
@@ -19,11 +45,36 @@ defmodule WechatMPAuth.ComponentAccessToken do
             expires_at: nil,
             client: nil
 
+  @doc """
+  Returns a new `WechatMPAuth.ComponentAccessToken` struct given the authorizer
+  access token `string` and `%WechatMPAuth.Client{}`.
+  """
   @spec new(binary, Client.t) :: t
   def new(token, client) when is_binary(token) do
     new(%{"component_access_token" => token}, client)
   end
 
+  @doc """
+  Same as `new/2` except that the first arg is a `map`.
+  Note if giving a map, please be sure to make the key a `string` no an `atom`.
+  This is used by `WechatMPAuth.Client.get_component_access_token/2` to create
+  the `WechatMPAuth.ComponentAccessToken` struct.
+
+  ### Example
+  ```
+  iex(1)> WechatMPAuth.ComponentAccessToken.new("clientId", %WechatMPAuth.Client{})
+  %WechatMPAuth.ComponentAccessToken{access_token: "clientId", appid: "",
+   client: %WechatMPAuth.Client{authorize_url: "https://mp.weixin.qq.com/cgi-bin/componentloginpage",
+   authorizer_access_token_url: "/component/api_query_auth",
+   client_id: "clientId", client_secret: "d1aifhuds6721637jahfjv76xh6sgc2",
+   component_access_token_url: "/component/api_component_token", params: %{},
+   pre_auth_code_url: "/component/api_create_preauthcode",
+   redirect_uri: "http://example.com/weixin_callback", site: "",
+   strategy: WechatMPAuth.Strategy.AuthCode}, expires_at: nil,
+   refresh_token: ""}
+  ```
+
+  """
   def new(response, client) do
     {std, other} = Dict.split(response, @standard)
 
@@ -32,16 +83,6 @@ defmodule WechatMPAuth.ComponentAccessToken do
       access_token:   std["component_access_token"],
       expires_at:     (std["expires_in"] || other["expires"] |> expires_at())]
   end
-
-  @doc """
-  Returns a unix timestamp based on now + expires_at (in seconds)
-  """
-  def expires_at(nil), do: nil
-  def expires_at(val) when is_binary(val) do
-    {int, _} = Integer.parse(val)
-    int
-  end
-  def expires_at(int), do: unix_now + int
 
   @doc """
   Makes a `POST` request to the given URL using the `WechatMPAuth.ComponentAccessToken`.

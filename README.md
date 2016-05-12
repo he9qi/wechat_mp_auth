@@ -1,7 +1,9 @@
 # WeChat Media Platform Authentication
 
-[![Build Status][travis-img]][travis] [![Hex Version][hex-img]][hex] [![License][license-img]][license]
+[![Build Status][travis-img]][travis] [![Coverage Status][coverage-img]][coverage] [![Hex Version][hex-img]][hex] [![License][license-img]][license]
 
+[coverage-img]: https://coveralls.io/repos/he9qi/wechat_mp_auth/badge.svg?branch=master&service=github
+[coverage]: https://coveralls.io/github/he9qi/wechat_mp_auth?branch=master
 [travis-img]: https://travis-ci.org/he9qi/wechat_mp_auth.svg?branch=master
 [travis]: https://travis-ci.org/he9qi/wechat_mp_auth
 [hex-img]: https://img.shields.io/hexpm/v/wechat_mp_auth.svg

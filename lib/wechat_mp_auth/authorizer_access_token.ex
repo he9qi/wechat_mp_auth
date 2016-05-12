@@ -1,4 +1,8 @@
 defmodule WechatMPAuth.AuthorizerAccessToken do
+  @moduledoc """
+    This module defines the `WechatMPAuth.AuthorizerAccessToken` struct
+  """
+
   alias WechatMPAuth.Client
   import WechatMPAuth.Util
 
@@ -20,11 +24,19 @@ defmodule WechatMPAuth.AuthorizerAccessToken do
             expires_at: nil,
             client: nil
 
+  @doc """
+  Returns a new `WechatMPAuth.AuthorizerAccessToken` struct given the authorizer
+  access token `string` and `%WechatMPAuth.Client{}`.
+  """
   @spec new(binary, Client.t) :: t
   def new(token, client) when is_binary(token) do
-    new(%{"authorizer_access_token" => token}, client)
+    new(%{"authorization_info" => %{"authorizer_access_token" => token}}, client)
   end
 
+  @doc """
+  Returns a new `WechatMPAuth.AuthorizerAccessToken` struct given the response
+  from `WechatMPAuth.Client.get_authorizer_access_token` and `%WechatMPAuth.Client{}`.
+  """
   def new(%{"authorization_info" => response}, client) do
     struct __MODULE__, [
       client:         client,
@@ -33,15 +45,5 @@ defmodule WechatMPAuth.AuthorizerAccessToken do
       appid:          response["authorizer_appid"],
       expires_at:     (response["expires_in"] |> expires_at())]
   end
-
-  @doc """
-  Returns a unix timestamp based on now + expires_at (in seconds)
-  """
-  def expires_at(nil), do: nil
-  def expires_at(val) when is_binary(val) do
-    {int, _} = Integer.parse(val)
-    int
-  end
-  def expires_at(int), do: unix_now + int
 
 end

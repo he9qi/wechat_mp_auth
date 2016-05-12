@@ -52,7 +52,7 @@ defmodule WechatMPAuth.Client do
     defaults to `WechatMPAuth.Strategy.AuthCode`
   * `client_id` - the client_id for the Wechat Component
   * `client_secret` - the client_secret for the Wechat Component
-  * `site` - the OAuth2 provider site host
+  * `site` - the WechatMPAuth provider site host
   * `component_access_token_url` - absolute or relative URL path to the authorization
     endpoint. Defaults to `"/component/api_component_token"`
   * `pre_auth_code_url` - absolute or relative URL path to the token endpoint.
@@ -93,7 +93,7 @@ defmodule WechatMPAuth.Client do
   end
 
   @doc """
-  Same as `get_component_access_token/4` but raises `WechatMPAuth.Error` if an error occurs during the
+  Same as `get_component_access_token/2` but raises `WechatMPAuth.Error` if an error occurs during the
   request.
   """
   @spec get_component_access_token!(t, params) :: ComponentAccessToken.t | Error.t

@@ -78,7 +78,7 @@ defmodule WechatMPAuth.TestHelpers do
 
   defp default_token_opts do
     [component_access_token: "abcdefgh",
-     expires_at: WechatMPAuth.Util.unix_now + 600]
+     expires_in: 600]
   end
 
   defp stringify_keys(dict) do
