@@ -42,8 +42,8 @@
   # component_access_token => `client.params["component_access_token"]`
   # authorization URL => "https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid=client_id&pre_auth_code=preauthcode@@@xxx&redirect_uri=https://example.com/auth/callback"
 
-  # Use the access token to make a request for resources
-  resource = WechatMPAuth.AccessToken.get!(token, "/api_get_authorizer_info?component_access_token=access-token-1234").body
+  # Use the component access token to make a request for resources
+  resource = WechatMPAuth.ComponentAccessToken.get!(token, "/api_get_authorizer_info?component_access_token=access-token-1234").body
   ```
 
 ## License
