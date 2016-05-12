@@ -20,15 +20,6 @@ defmodule WechatMPAuth.RequestTest do
     assert resp.body == %{"success" => true}
   end
 
-  test "Request GET Connection Failure", %{server: server} do
-    Bypass.down(server)
-
-    assert {:error, error} = Request.request(:get, "http://localhost:#{server.port}/")
-    assert error.reason == :econnrefused
-
-    Bypass.up(server)
-  end
-
   test "Request GET Error Response", %{server: server} do
     bypass server, "GET", "/", fn conn ->
       send_resp(conn, 200, ~s<{
@@ -78,9 +69,18 @@ defmodule WechatMPAuth.RequestTest do
     assert {:ok, resp} = Request.request(:post,
       "http://localhost:#{server.port}/",
       %{"token": 123},
-      [{"content-type", "application/x-www-form-urlencoded"}, {"accept", "application/x-www-form-urlencoded"}])
+      [{"content-type", "application/x-www-form-urlencoded"}])
 
     assert resp.body == "{\"success\":true}"
+  end
+
+  test "Request GET Connection Failure", %{server: server} do
+    Bypass.down(server)
+
+    assert {:error, error} = Request.request(:get, "http://localhost:#{server.port}/")
+    assert error.reason == :econnrefused
+
+    Bypass.up(server)
   end
 
 end
