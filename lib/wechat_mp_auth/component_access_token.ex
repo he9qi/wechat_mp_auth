@@ -51,11 +51,29 @@ defmodule WechatMPAuth.ComponentAccessToken do
     do: request(:post, token, url, body)
 
   @doc """
+  Same as `post/3` but returns a `WechatMPAuth.Response` or `WechatMPAuth.Error` exception
+  if the request results in an error.
+  An `WechatMPAuth.Error` exception is raised if the request results in an
+  error tuple (`{:error, reason}`).
+  """
+  @spec post!(t, binary, body) :: Response.t | Error.t
+  def post!(token, url, body \\ ""),
+    do: request!(:post, token, url, body)
+
+  @doc """
   Makes a `GET` request to the given URL using the `WechatMPAuth.ComponentAccessToken`.
   """
   @spec get(t, binary) :: {:ok, Response.t} | {:error, Error.t}
   def get(token, url),
     do: request(:get, token, url, "")
+
+  @doc """
+  Same as `get/2` but returns a `WechatMPAuth.Response` or `WechatMPAuth.Error` exception if
+  the request results in an error.
+  """
+  @spec get!(t, binary) :: Response.t | Error.t
+  def get!(token, url),
+    do: request!(:get, token, url, "")
 
   @doc """
   Makes a request of given type to the given URL using the `WechatMPAuth.ComponentAccessToken`.
@@ -66,6 +84,20 @@ defmodule WechatMPAuth.ComponentAccessToken do
     case Request.request(method, url, body) do
       {:ok, response} -> {:ok, response}
       {:error, error} -> {:error, error}
+    end
+  end
+
+  @doc """
+  Same as `request/4` but returns `WechatMPAuth.Response` or raises an error if an
+  error occurs during the request.
+  An `WechatMPAuth.Error` exception is raised if the request results in an
+  error tuple (`{:error, reason}`).
+  """
+  @spec request!(atom, t, binary, body) :: Response.t | Error.t
+  def request!(method, token, url, body \\ "") do
+    case request(method, token, url, body) do
+      {:ok, response} -> response
+      {:error, error} -> raise error
     end
   end
 
