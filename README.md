@@ -29,13 +29,12 @@
 
 ## Usage
 
-  1. Initialize a client with client_id, client_secret, site, and redirect_uri.
+  1. Initialize a client with `client_id`, `client_secret`, and `redirect_uri`.
   ```elixir
   client = WechatMPAuth.Client.new([
     strategy: WechatMPAuth.Strategy.AuthCode, #default
     client_id: "client_id",
     client_secret: "abc123",
-    site: "https://auth.example.com",
     redirect_uri: "https://example.com/auth/callback"
   ])
   ```
@@ -51,7 +50,7 @@
 
   3. Use the component access token to make a request for resources
   ```elixir
-  info = WechatMPAuth.ComponentAccessToken.get!(token, "/api_get_authorizer_info?component_access_token=access-token-1234").body
+  resource = WechatMPAuth.ComponentAccessToken.get!(token, "/api_get_authorizer_info?component_access_token=access-token-1234").body
   ```
 
 ## License
