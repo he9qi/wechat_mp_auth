@@ -29,15 +29,8 @@
 
 ## Usage
 
-  Current strategy:
-
-  - Authorization Code
-
-### Authorization Code Flow (AuthCode Strategy)
-
+  1. Initialize a client with client_id, client_secret, site, and redirect_uri.
   ```elixir
-  # Initialize a client with client_id, client_secret, site, and redirect_uri.
-  # The strategy option is optional as it defaults to `WechatMPAuth.Strategy.AuthCode`.
   client = WechatMPAuth.Client.new([
     strategy: WechatMPAuth.Strategy.AuthCode, #default
     client_id: "client_id",
@@ -45,16 +38,20 @@
     site: "https://auth.example.com",
     redirect_uri: "https://example.com/auth/callback"
   ])
+  ```
 
-  # `get_authorize_url` generates:
-  #   1. the authorization URL using `component_verify_ticket` received from WeChat
-  #   2. client that contains `component_access_token`
+  2. Use `get_authorize_url` to generate:
+    a. the authorization URL using `component_verify_ticket` received from WeChat
+    b. client that contains `component_access_token`
+  ```elixir
   {client, url} = WechatMPAuth.Client.get_authorize_url(client, [verify_ticket: verify_ticket])
   # component_access_token => `client.params["component_access_token"]`
   # authorization URL => "https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid=client_id&pre_auth_code=preauthcode@@@xxx&redirect_uri=https://example.com/auth/callback"
+  ```
 
-  # Use the component access token to make a request for resources
-  resource = WechatMPAuth.ComponentAccessToken.get!(token, "/api_get_authorizer_info?component_access_token=access-token-1234").body
+  3. Use the component access token to make a request for resources
+  ```elixir
+  info = WechatMPAuth.ComponentAccessToken.get!(token, "/api_get_authorizer_info?component_access_token=access-token-1234").body
   ```
 
 ## License
