@@ -18,7 +18,7 @@
   1. Add wechat_mp_auth to your list of dependencies in `mix.exs`:
 
         def deps do
-          [{:wechat_mp_auth, "~> 0.0.1"}]
+          [{:wechat_mp_auth, "~> 0.0.2"}]
         end
 
   2. Ensure wechat_mp_auth is started before your application:
