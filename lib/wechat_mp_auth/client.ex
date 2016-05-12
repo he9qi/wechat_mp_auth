@@ -53,12 +53,15 @@ defmodule WechatMPAuth.Client do
   * `client_id` - the client_id for the Wechat Component
   * `client_secret` - the client_secret for the Wechat Component
   * `site` - the WechatMPAuth provider site host
-  * `component_access_token_url` - absolute or relative URL path to the authorization
+  * `authorize_url` - absolute or relative URL path to the token endpoint.
+    Defaults to `"https://mp.weixin.qq.com/cgi-bin/componentloginpage"`
+  * `authorizer_access_token_url` - absolute or relative URL path to the authorizer's authorization
+    endpoint. Defaults to `"/component/api_query_auth"`
+  * `component_access_token_url` - absolute or relative URL path to the component's authorization
     endpoint. Defaults to `"/component/api_component_token"`
-  * `pre_auth_code_url` - absolute or relative URL path to the token endpoint.
+  * `pre_auth_code_url` - absolute or relative URL path to the authentication code endpoint.
     Defaults to `"/component/api_create_preauthcode"`
   * `params` - a map of request parameters
-  * `headers` - a list of request headers
   * `redirect_uri` - the URI the provider should redirect to after authorization
      or token requests
   """
