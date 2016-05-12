@@ -15,7 +15,8 @@ defmodule WechatMp.Mixfile do
      description: description,
      deps: deps,
      docs: docs,
-     elixirc_paths: elixirc_paths(Mix.env)]
+     elixirc_paths: elixirc_paths(Mix.env),
+     test_coverage: [tool: ExCoveralls]]
   end
 
   def application do
@@ -28,6 +29,7 @@ defmodule WechatMp.Mixfile do
      {:mimetype_parser, "~> 0.1"},
 
      {:bypass, "~> 0.1", only: :test},
+     {:excoveralls, "~> 0.3", only: :test},
 
      # docs dependencies
      {:earmark, "~>0.1", only: :dev},

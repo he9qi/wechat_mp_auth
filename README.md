@@ -1,4 +1,13 @@
-# WechatMPAuth
+# WeChat Media Platform Authentication
+
+[![Build Status][travis-img]][travis] [![Hex Version][hex-img]][hex] [![License][license-img]][license]
+
+[travis-img]: https://travis-ci.org/he9qi/wechat_mp_auth.svg?branch=master
+[travis]: https://travis-ci.org/he9qi/wechat_mp_auth
+[hex-img]: https://img.shields.io/hexpm/v/wechat_mp_auth.svg
+[hex]: https://hex.pm/packages/wechat_mp_auth
+[license-img]: http://img.shields.io/badge/license-MIT-brightgreen.svg
+[license]: http://opensource.org/licenses/MIT
 
 > An Elixir WeChat Media Platform Authentication Client Library [微信第三方平台授权](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1453779503&token=0fbba0141afd0e79e61025b7a0cbf63a1850251e&lang=zh_CN)
 

@@ -4,9 +4,6 @@ elixir:
 otp_release:
   - 18.2.1
 env: MIX_ENV=test
-sudo: false # faster builds
-notifications:
-  email: false
+sudo: false
 script:
-  - mix compile --warnings-as-errors
-  - mix test
+  - mix coveralls.travis
