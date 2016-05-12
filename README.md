@@ -30,6 +30,7 @@
 ## Usage
 
   1. Initialize a client with `client_id`, `client_secret`, and `redirect_uri`.
+
   ```elixir
   client = WechatMPAuth.Client.new([
     strategy: WechatMPAuth.Strategy.AuthCode, #default
@@ -40,15 +41,17 @@
   ```
 
   2. Use `get_authorize_url` to generate:
-    a. the authorization URL using `component_verify_ticket` received from WeChat
-    b. client that contains `component_access_token`
+    - the authorization URL using `component_verify_ticket` received from WeChat
+    - client that contains `component_access_token`
+
   ```elixir
   {client, url} = WechatMPAuth.Client.get_authorize_url(client, [verify_ticket: verify_ticket])
   # component_access_token => `client.params["component_access_token"]`
   # authorization URL => "https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid=client_id&pre_auth_code=preauthcode@@@xxx&redirect_uri=https://example.com/auth/callback"
   ```
 
-  3. Use the component access token to make a request for resources
+  3. Use the component access token to make a request for resources.
+
   ```elixir
   resource = WechatMPAuth.ComponentAccessToken.get!(token, "/api_get_authorizer_info?component_access_token=access-token-1234").body
   ```
