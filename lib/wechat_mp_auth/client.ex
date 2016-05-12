@@ -48,7 +48,7 @@ defmodule WechatMPAuth.Client do
   @doc """
   Builds a new WechatMPAuth client struct using the `opts` provided.
   ## Client struct fields
-  * `strategy` - a module that implements the Wechat MP OAuth strategy,
+  * `strategy` - a module that implements the Wechat MP Auth strategy,
     defaults to `WechatMPAuth.Strategy.AuthCode`
   * `client_id` - the client_id for the Wechat Component
   * `client_secret` - the client_secret for the Wechat Component
