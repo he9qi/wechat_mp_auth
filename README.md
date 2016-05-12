@@ -53,7 +53,7 @@
   3. Use the component access token to make a request for resources.
 
   ```elixir
-  resource = WechatMPAuth.ComponentAccessToken.get!(token, "/api_get_authorizer_info?component_access_token=access-token-1234").body
+  resource = WechatMPAuth.ComponentAccessToken.get!(token, "/api_get_authorizer_info").body
   ```
 
 ## License

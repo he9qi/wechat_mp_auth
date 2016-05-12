@@ -29,6 +29,7 @@ defmodule WechatMPAuth.ComponentAccessToken do
   import WechatMPAuth.Util
 
   alias WechatMPAuth.Request
+  alias WechatMPAuth.ComponentAccessToken
 
   @standard ["component_access_token", "expires_in"]
 
@@ -121,7 +122,7 @@ defmodule WechatMPAuth.ComponentAccessToken do
   """
   @spec request(atom, t, binary, body) :: {:ok, Response.t} | {:error, Error.t}
   def request(method, token, url, body \\ "") do
-    url = process_url(token, url)
+    url = token |> process_url(url) |> access_token_url(token)
     case Request.request(method, url, body) do
       {:ok, response} -> {:ok, response}
       {:error, error} -> {:error, error}
@@ -140,6 +141,12 @@ defmodule WechatMPAuth.ComponentAccessToken do
       {:ok, response} -> response
       {:error, error} -> raise error
     end
+  end
+
+
+  defp access_token_url(url, %ComponentAccessToken{access_token: access_token}) do
+    mark = if String.ends_with?(url, "/"), do: "?", else: "/?"
+    url <> mark <> "component_access_token=#{access_token}"
   end
 
   defp process_url(token, url) do

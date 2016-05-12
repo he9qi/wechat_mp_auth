@@ -11,7 +11,7 @@ defmodule WechatMPAuth.TestHelpers do
     bypass(server, method, path, [], fun)
   end
   def bypass(server, method, path, opts, fun) do
-    {token, opts}   = Keyword.pop(opts, :token, nil)
+    {_, opts}   = Keyword.pop(opts, :token, nil)
     {accept, _opts} = Keyword.pop(opts, :accept, "json")
 
     Bypass.expect server, fn conn ->

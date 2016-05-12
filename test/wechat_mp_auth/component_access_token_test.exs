@@ -39,6 +39,7 @@ defmodule WechatMPAuth.ComponentAccessTokenTest do
 
   test "GET", %{server: server, access_token: access_token} do
     bypass server, "GET", "/", fn conn ->
+      assert conn.query_params == %{"component_access_token" => "access-token-1234"}
       send_resp(conn, 200, ~s({"success":true}))
     end
     assert {:ok, resp} = get(access_token, "/")
@@ -120,7 +121,7 @@ defmodule WechatMPAuth.ComponentAccessTokenTest do
       send_resp(conn, 200, ~s({"success":true}))
     end
 
-    assert {:ok, resp} = request(:get, access_token, "http://localhost:#{server.port}", "")
+    assert {:ok, resp} = request(:get, access_token, "http://localhost:#{server.port}/", "")
     assert resp.body == %{"success" => true}
   end
 
@@ -130,7 +131,7 @@ defmodule WechatMPAuth.ComponentAccessTokenTest do
     authorizer_info_url = "/component/api_get_authorizer_info"
 
     Bypass.expect server, fn conn ->
-      assert conn.request_path == authorizer_info_url
+      assert conn.request_path == authorizer_info_url <> "/"
       assert conn.method == "POST"
 
       {:ok, body, conn} = Plug.Conn.read_body(conn)
@@ -161,7 +162,7 @@ defmodule WechatMPAuth.ComponentAccessTokenTest do
 
     assert {:ok, response } =
       build_token([component_access_token: access_token], client)
-        |> post(authorizer_info_url <> "?component_access_token=#{access_token}", params)
+        |> post(authorizer_info_url, params)
 
     info = response.body["authorizer_info"]
 
