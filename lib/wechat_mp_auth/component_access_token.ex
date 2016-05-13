@@ -143,7 +143,6 @@ defmodule WechatMPAuth.ComponentAccessToken do
     end
   end
 
-
   defp access_token_url(url, %ComponentAccessToken{access_token: access_token}) do
     mark = if String.ends_with?(url, "/"), do: "?", else: "/?"
     url <> mark <> "component_access_token=#{access_token}"

@@ -11,6 +11,45 @@ defmodule WechatMPAuth.ClientTest do
     {:ok, client: client, server: server}
   end
 
+  test "get_authorizer_access_token", %{client: client, server: server} do
+    access_token = "authorizer-access-token-1234"
+    refresh_token = "authorizer-refresh-token-1234"
+    authorizer_appid = "authorizer-appid"
+    authorization_code = "auth-code"
+    expires_in = 600
+
+    Bypass.expect server, fn conn ->
+      case conn.request_path do
+        "/component/api_query_auth" ->
+          query_params = URI.decode_query(conn.query_string)
+          assert query_params["component_access_token"] == "c-token"
+
+          {:ok, body, conn} = Plug.Conn.read_body(conn)
+          body = Poison.decode!(body)
+          assert body["component_appid"] == client.client_id
+          assert body["authorization_code"] == authorization_code
+
+          send_resp(conn, 200, ~s({
+            "authorization_info": {
+                "authorizer_access_token": "#{access_token}",
+                "authorizer_refresh_token": "#{refresh_token}",
+                "authorizer_appid": "#{authorizer_appid}",
+                "expires_in": #{expires_in}
+              }
+          }))
+      end
+    end
+
+    {:ok, authorizer_access_token} = client
+      |> get_authorizer_access_token([authorization_code: authorization_code, component_access_token: "c-token"])
+
+    assert authorizer_access_token.access_token == access_token
+    assert authorizer_access_token.refresh_token == refresh_token
+    assert authorizer_access_token.appid == authorizer_appid
+    assert authorizer_access_token.expires_at
+    assert authorizer_access_token.client
+  end
+
   test "authorize_url", %{server: server} do
     verify_ticket = "ticket@@abc-123"
     pre_auth_code = "pre-auth-code-1234"

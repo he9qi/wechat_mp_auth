@@ -50,7 +50,13 @@
   # authorization URL => "https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid=client_id&pre_auth_code=preauthcode@@@xxx&redirect_uri=https://example.com/auth/callback"
   ```
 
-  3. Use the component access token to make a request for resources.
+  3. After authorizing from the above URL, server redirects to `redirect_uri` with query params: `authorization_code` and `expires_in` (https://example.com/auth/callback?auth_code=@@@&expires_in=600). Use `component_access_token` and `authorization_code` to get authorizer access token.
+
+  ```elixir
+  {:ok, authorizer_access_token} = client |> WechatMPAuth.Client.get_authorizer_access_token([authorization_code: authorization_code, component_access_token: "component-access-token"])
+  ```
+
+  3. Use `component_access_token` to make a request for resources.
 
   ```elixir
   resource = WechatMPAuth.ComponentAccessToken.get!(token, "/api_get_authorizer_info").body

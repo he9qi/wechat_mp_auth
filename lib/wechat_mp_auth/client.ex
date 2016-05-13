@@ -68,6 +68,14 @@ defmodule WechatMPAuth.Client do
   @spec new(Keyword.t) :: t
   def new(opts), do: struct(__MODULE__, opts)
 
+  @doc """
+  Returns an `WechatMPAuth.AuthorizerAccessToken` struct that can then be used to access the
+  authorizer's RESTful API.
+  ## Arguments
+  * `client` - a `WechatMPAuth.Client` struct
+  * `params` - a keyword list of request parameters
+  """
+  @spec get_authorizer_access_token(t, params) :: {:ok, AuthoerizerAccessToken.t} | {:error, Error.t}
   def get_authorizer_access_token(client, params) do
     {client, url} = authorizer_access_token_url(client, params)
     case Request.request(:post, url, client.params) do
@@ -77,13 +85,10 @@ defmodule WechatMPAuth.Client do
   end
 
   @doc """
-  Initializes an `WechatMPAuth.ComponentAccessToken` struct by making a request to the token
-  endpoint.
   Returns an `WechatMPAuth.ComponentAccessToken` struct that can then be used to access the
   provider's RESTful API.
   ## Arguments
-  * `client` - a `WechatMPAuth.Client` struct with the strategy to use, defaults to
-    `WechatMPAuth.Strategy.AuthCode`
+  * `client` - a `WechatMPAuth.Client` struct with the strategy to use
   * `params` - a keyword list of request parameters
   """
   @spec get_component_access_token(t, params) :: {:ok, ComponentAccessToken.t} | {:error, Error.t}
