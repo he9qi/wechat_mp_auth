@@ -37,7 +37,7 @@ defmodule WechatMPAuth.Client do
   defstruct strategy: WechatMPAuth.Strategy.AuthCode,
             client_id: "",
             client_secret: "",
-            site: "",
+            site: "https://api.weixin.qq.com/cgi-bin",
             authorize_url: "https://mp.weixin.qq.com/cgi-bin/componentloginpage",
             authorizer_access_token_url: "/component/api_query_auth",
             component_access_token_url: "/component/api_component_token",
