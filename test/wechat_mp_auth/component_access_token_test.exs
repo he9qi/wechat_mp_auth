@@ -131,7 +131,7 @@ defmodule WechatMPAuth.ComponentAccessTokenTest do
     authorizer_info_url = "/component/api_get_authorizer_info"
 
     Bypass.expect server, fn conn ->
-      assert conn.request_path == authorizer_info_url <> "/"
+      assert conn.request_path == authorizer_info_url
       assert conn.method == "POST"
 
       {:ok, body, conn} = Plug.Conn.read_body(conn)
