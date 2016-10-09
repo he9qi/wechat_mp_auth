@@ -28,8 +28,8 @@ defmodule WechatMPAuth.RequestTest do
       }>)
     end
 
-    assert {:ok, resp} = Request.request(:get, "http://localhost:#{server.port}/")
-    assert resp.body == %{"errcode" => 42001, "errmsg" => "access_token expired hint: [utxVxa0955vr19]"}
+    assert {:error, errmsg} = Request.request(:get, "http://localhost:#{server.port}/")
+    assert errmsg == %WechatMPAuth.Error{reason: "access_token expired hint: [utxVxa0955vr19]"}
   end
 
   test "Request GET!", %{server: server} do
