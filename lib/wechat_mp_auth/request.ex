@@ -15,7 +15,12 @@ defmodule WechatMPAuth.Request do
 
     case super(method, url, body, headers, opts) do
       {:ok, %HTTPoison.Response{status_code: status, headers: headers, body: body}} ->
-        {:ok, Response.new(status, headers, body)}
+        response = Response.new(status, headers, body)
+        case response.body do
+          %{"errcode" => 0} -> {:ok, response}
+          %{"errcode" => _} -> {:error, %Error{reason: response.body["errmsg"]}}
+          _ -> {:ok, response}
+        end
       {:error, %HTTPoison.Error{reason: reason}} ->
         {:error, %Error{reason: reason}}
     end
