@@ -1,7 +1,7 @@
 defmodule WechatMPAuth.Repo do
   alias WechatMPAuth.RepoInsertable
 
-  @db_prefix Application.get_env(:peppa, :db_prefix)
+  @db_prefix Application.get_env(:wechat_mp_auth, :db_prefix)
 
   def insert(model, store) do
     with key <- RepoInsertable.key(model),
