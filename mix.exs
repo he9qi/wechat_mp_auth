@@ -20,14 +20,17 @@ defmodule WechatMp.Mixfile do
   end
 
   def application do
-    [applications: [:logger, :httpoison]]
+    [applications: [:cowboy, :logger, :plug, :httpoison, :redix],
+     mod: {WechatMPAuth, []}]
   end
 
   defp deps do
-    [{:httpoison, "~> 0.9.0"},
+    [{:cowboy, "~> 1.0.0"},
+     {:httpoison, "~> 0.9.0"},
      {:plug, "~> 1.0"},
      {:poison, "~> 2.0"},
      {:mimetype_parser, "~> 0.1"},
+     {:redix, "0.4.0"},
 
      {:bypass, "~> 0.1", only: :test},
      {:excoveralls, "~> 0.3", only: :test},
