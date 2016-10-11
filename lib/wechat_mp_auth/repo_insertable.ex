@@ -4,9 +4,14 @@ defprotocol WechatMPAuth.RepoInsertable do
 end
 
 defimpl WechatMPAuth.RepoInsertable, for: WechatMPAuth.ComponentVerifyTicket do
-  def key(%WechatMPAuth.ComponentVerifyTicket{AppId: app_id, InfoType: info_type}) do
+  alias WechatMPAuth.ComponentVerifyTicket
+  def key(%ComponentVerifyTicket{AppId: app_id, InfoType: info_type}) do
     [info_type, app_id] |> Enum.join(":")
   end
+  def value(%ComponentVerifyTicket{ComponentVerifyTicket: ticket}), do: ticket
+end
 
-  def value(%WechatMPAuth.ComponentVerifyTicket{ComponentVerifyTicket: ticket}), do: ticket
+defimpl WechatMPAuth.RepoInsertable, for: BitString do
+  def key(str), do: str
+  def value(str), do: str
 end
