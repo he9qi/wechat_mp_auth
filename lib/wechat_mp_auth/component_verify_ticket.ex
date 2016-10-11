@@ -7,10 +7,10 @@ defmodule WechatMPAuth.ComponentVerifyTicket do
   alias WechatMPAuth.RepoInsertable
   alias WechatMPAuth.Repo
 
-  def load(app_id, store) do
+  def load(app_id, repo) do
     with ticket <- %__MODULE__{AppId: app_id},
             key <- RepoInsertable.key(ticket),
-   {:ok, value} <- Repo.get(key, store),
+   {:ok, value} <- Repo.get(repo, key),
             do: {:ok, %{ ticket | ComponentVerifyTicket: value }}
   end
 end

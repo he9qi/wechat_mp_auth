@@ -2,7 +2,7 @@ defmodule WechatMPAuth.RedisStore do
   @use WechatMPAuth.Store
 
   def set(key, value) do
-    {:ok, _} = Redix.command(:redix, ~w(SET #{key} #{value}))
+    {:ok, _} = Redix.command(:redix, ["SET", key, value])
     :ok
   end
 
