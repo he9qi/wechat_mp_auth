@@ -37,9 +37,10 @@ defmodule WechatMPAuth.Router do
   end
 
   get "auth/wx/:source/callback" do
+    conn = conn |> Plug.Conn.fetch_query_params
     result =
       with  client <- ClientFactory.create_client(source),
-  {:ok, auth_code} <- conn.params |> Dict.fetch("auth_code"),
+  {:ok, auth_code} <- conn.query_params |> Dict.fetch("auth_code"),
               repo <- %Repo{name: @db_prefix, store: @store},
    authorizer_info <- get_authorizer_info(client, auth_code, source, repo, @authorizer, @c_a_token),
           {:ok, _} <- Repo.insert(repo, authorizer_info),
