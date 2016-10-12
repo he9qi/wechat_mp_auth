@@ -36,7 +36,7 @@ defmodule WechatMPAuth.Router do
     end
   end
 
-  post "auth/wx/:source/callback" do
+  get "auth/wx/:source/callback" do
     result =
       with  client <- ClientFactory.create_client(source),
   {:ok, auth_code} <- conn.params |> Dict.fetch("auth_code"),

@@ -26,7 +26,7 @@ defmodule WechatMPAuth.RouterTest do
     setup do
       @store.set(@c_a_token_key, @comp_access_token)
       params = %{auth_code: @auth_code}
-      conn = conn(:post, "/auth/wx/#{@entity_id}/callback", params)
+      conn = conn(:get, "/auth/wx/#{@entity_id}/callback", params)
       conn = WechatMPAuth.Router.call(conn, @opts)
 
       on_exit fn ->
