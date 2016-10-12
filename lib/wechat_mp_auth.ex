@@ -6,7 +6,7 @@ defmodule WechatMPAuth do
 
     children = [
       worker(__MODULE__, [], function: :run),
-      worker(Redix, [[], [name: :redix]]),
+      worker(Redix, [Application.get_env(:wechat_mp_auth, :redis_uri), [name: :redix]]),
       worker(ConCache, [[], [name: :in_memory_store]])
     ]
 
