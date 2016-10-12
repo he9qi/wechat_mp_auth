@@ -1,6 +1,4 @@
 defmodule WechatMPAuth.ClientFactory do
-  alias WechatMPAuth.Client
-
   @client_id     Application.get_env(:wechat_mp_auth, :client_id)
   @client_secret Application.get_env(:wechat_mp_auth, :client_secret)
   @redirect_uri  Application.get_env(:wechat_mp_auth, :redirect_uri)

@@ -4,6 +4,7 @@ defmodule WechatMPAuth.RouterTest do
 
   @opts              WechatMPAuth.Router.init([])
   @db_prefix         Application.get_env(:wechat_mp_auth, :db_prefix)
+  @store             Application.get_env(:wechat_mp_auth, :store)
   @client_id         Application.get_env(:wechat_mp_auth, :client_id)
   @redirect_uri      Application.get_env(:wechat_mp_auth, :redirect_uri)
   @entity_id         "entity_12345"
@@ -16,24 +17,27 @@ defmodule WechatMPAuth.RouterTest do
   @verify_ticket_val "ticket@@123"
   @auth_code         "auth_code12345"
   @comp_access_token "component-access-token-1234"
+  @auth_access_token "authorizer-access-token-1234"
   @refresh_token     "refreshtoken@@@12345"
   @a_app_id          "wxabcde"
   @authorizer_name   "Lafanyi App"
 
   describe "handles wechat authorization callback" do
     setup do
-      Redix.command(
-        :redix, ~w(SET #{@c_a_token_key} #{@comp_access_token})
-      )
-      on_exit fn ->
-        Redix.command(:redix, ~w(DEL #{@a_a_token_key}))
-        Redix.command(:redix, ~w(DEL #{@a_r_token_key}))
-        Redix.command(:redix, ~w(DEL #{@a_r_token_key}))
-      end
-
+      @store.set(@c_a_token_key, @comp_access_token)
       params = %{auth_code: @auth_code}
       conn = conn(:post, "/auth/wx/#{@entity_id}/callback", params)
       conn = WechatMPAuth.Router.call(conn, @opts)
+
+      on_exit fn ->
+        @store.delete(@verify_ticket_key)
+        @store.delete(@c_a_token_key)
+        @store.delete(@c_a_token_key)
+        @store.delete(@a_a_token_key)
+        @store.delete(@a_r_token_key)
+        @store.delete(@a_app_id_key)
+        @store.delete(@a_name_key)
+      end
 
       {:ok, conn: conn}
     end
@@ -43,29 +47,24 @@ defmodule WechatMPAuth.RouterTest do
     end
 
     test "saves authorizer access token" do
-      {:ok, authorizer_access_token} =
-        Redix.command(:redix, ~w(GET #{@a_a_token_key}))
-
-      assert "authorizer-access-token-1234" == authorizer_access_token
+      {:ok, authorizer_access_token} = @store.get(@a_a_token_key)
+      assert @auth_access_token == authorizer_access_token
     end
 
     test "saves authorizer app id" do
-      {:ok, authorizer_app_id} =
-        Redix.command(:redix, ~w(GET #{@a_app_id_key}))
+      {:ok, authorizer_app_id} = @store.get(@a_app_id_key)
 
       assert @a_app_id == authorizer_app_id
     end
 
     test "saves authorizer refresh token" do
-      {:ok, authorizer_refresh_token} =
-        Redix.command(:redix, ~w(GET #{@a_r_token_key}))
+      {:ok, authorizer_refresh_token} = @store.get(@a_r_token_key)
 
       assert @refresh_token == authorizer_refresh_token
     end
 
     test "saves authorizer name" do
-      {:ok, authorizer_name} =
-        Redix.command(:redix, ~w(GET #{@a_name_key}))
+      {:ok, authorizer_name} = @store.get(@a_name_key)
 
       assert @authorizer_name == authorizer_name
     end
@@ -73,16 +72,14 @@ defmodule WechatMPAuth.RouterTest do
 
   describe "initiate wechat authorization" do
     setup do
-      Redix.command(
-        :redix, ~w(SET #{@verify_ticket_key} #{@verify_ticket_val})
-      )
+      @store.set @verify_ticket_key, @verify_ticket_val
 
       conn = conn(:get, "/auth/wx/#{@entity_id}")
       conn = WechatMPAuth.Router.call(conn, @opts)
 
       on_exit fn ->
-        Redix.command(:redix, ~w(DEL #{@verify_ticket_key}))
-        Redix.command(:redix, ~w(DEL #{@c_a_token_key}))
+        @store.delete(@verify_ticket_key)
+        @store.delete(@c_a_token_key)
       end
 
       {:ok, conn: conn}
@@ -98,8 +95,7 @@ defmodule WechatMPAuth.RouterTest do
     end
 
     test "stores component access token" do
-      {:ok, component_access_token} =
-        Redix.command(:redix, ~w(GET #{@c_a_token_key}))
+      {:ok, component_access_token} = @store.get(@c_a_token_key)
 
       assert @comp_access_token == component_access_token
     end

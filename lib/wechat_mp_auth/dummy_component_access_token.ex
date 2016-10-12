@@ -5,7 +5,7 @@ defmodule WechatMPAuth.DummyComponentAccessToken do
     defstruct [:body]
   end
 
-  def post!(token, "/component/api_get_authorizer_info", %{component_appid: @client_id, authorizer_appid: "wxabcde"}) do
+  def post!(_token, "/component/api_get_authorizer_info", %{component_appid: @client_id, authorizer_appid: "wxabcde"}) do
     %WechatMPAuth.DummyComponentAccessToken.Result{body:
       %{"authorization_info" => %{
         "authorizer_appid" => "wxcbbafb71295a8940",

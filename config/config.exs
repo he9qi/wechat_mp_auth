@@ -4,7 +4,7 @@ use Mix.Config
 
 config :wechat_mp_auth, db_prefix: System.get_env("DB_PREFIX")
 config :wechat_mp_auth, redis_uri: System.get_env("REDIS_URI") || "http://127.0.0.1:6379"
-
+config :wechat_mp_auth, store:      WechatMPAuth.RedisStore
 config :wechat_mp_auth, authorizer: WechatMPAuth.Client
 config :wechat_mp_auth, c_a_token:  WechatMPAuth.ComponentAccessToken
 

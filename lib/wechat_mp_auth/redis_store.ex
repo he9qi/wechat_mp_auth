@@ -10,4 +10,9 @@ defmodule WechatMPAuth.RedisStore do
   def get(key) do
     Redix.command(:redix, ~w(GET #{key}))
   end
+
+  def delete(key) do
+    Redix.command(:redix, ~w(DEL #{key}))
+    :ok
+  end
 end

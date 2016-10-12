@@ -4,7 +4,6 @@ defmodule WechatMPAuth.Router do
 
   alias WechatMPAuth.ClientFactory
   alias WechatMPAuth.ComponentVerifyTicket, as: CVT
-  alias WechatMPAuth.RedisStore
   alias WechatMPAuth.Repo
 
   import WechatMPAuth.AuthorizerInfo, only: [get_authorizer_info: 6, get_url: 4]
@@ -13,6 +12,7 @@ defmodule WechatMPAuth.Router do
   @client_id  Application.get_env(:wechat_mp_auth, :client_id)
   @db_prefix  Application.get_env(:wechat_mp_auth, :db_prefix)
   @c_a_token  Application.get_env(:wechat_mp_auth, :c_a_token)
+  @store      Application.get_env(:wechat_mp_auth, :store)
 
   plug :match
   plug :dispatch
@@ -20,7 +20,7 @@ defmodule WechatMPAuth.Router do
   get "/auth/wx/:source" do
     result =
                     with client <- ClientFactory.create_client(source),
-                           repo <- %Repo{name: @db_prefix, store: RedisStore},
+                           repo <- %Repo{name: @db_prefix, store: @store},
                          ticket <- Repo.get(repo, %CVT{app_id: @client_id}),
     {:ok, url, authorizer_info} <- get_url(client, ticket, source, @authorizer),
                        {:ok, _} <- Repo.insert(repo, authorizer_info),
@@ -40,7 +40,7 @@ defmodule WechatMPAuth.Router do
     result =
       with  client <- ClientFactory.create_client(source),
   {:ok, auth_code} <- conn.params |> Dict.fetch("auth_code"),
-              repo <- %Repo{name: @db_prefix, store: RedisStore},
+              repo <- %Repo{name: @db_prefix, store: @store},
    authorizer_info <- get_authorizer_info(client, auth_code, source, repo, @authorizer, @c_a_token),
           {:ok, _} <- Repo.insert(repo, authorizer_info),
       do: {:ok, authorizer_info}

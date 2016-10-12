@@ -7,6 +7,7 @@ defmodule WechatMPAuth do
     children = [
       worker(__MODULE__, [], function: :run),
       worker(Redix, [[], [name: :redix]]),
+      worker(ConCache, [[], [name: :in_memory_store]])
     ]
 
     opts = [strategy: :one_for_one, name: WechatMPAuth.Supervisor]

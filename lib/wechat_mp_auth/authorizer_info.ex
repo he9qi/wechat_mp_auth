@@ -65,6 +65,8 @@ defmodule WechatMPAuth.AuthorizerInfo do
             access_token: access_token,
             refresh_token: refresh_token,
             app_id: app_id,
-            name: name}
+            name: name,
+            component_access_token: ca_token,
+            source: source}
   end
 end
