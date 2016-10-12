@@ -1,7 +1,7 @@
 defmodule WechatMPAuth.InMemoryStore do
   @use WechatMPAuth.Store
 
-  def set(key, nil), do: :ok
+  def set(_, nil), do: :ok
   def set(key, value) do
     ConCache.put(:in_memory_store, key, value)
     :ok

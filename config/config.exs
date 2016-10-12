@@ -9,8 +9,8 @@ config :wechat_mp_auth, authorizer: WechatMPAuth.Client
 config :wechat_mp_auth, c_a_token:  WechatMPAuth.ComponentAccessToken
 
 config :wechat_mp_auth,
-  client_id: "client123", #
-  client_secret: "d1aifhuds6721637jahfjv76xh6sgc2", #
-  redirect_uri: "http://example.com/auth/wx"
+  client_id:     System.get_env["WECHAT_CLIENT_ID"],
+  client_secret: System.get_env["WECHAT_CLIENT_SECRET"],
+  redirect_uri:  System.get_env["WECHAT_REDIRECT_URI"]
 
 import_config "#{Mix.env}.exs"
