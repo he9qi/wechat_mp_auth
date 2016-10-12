@@ -1,35 +1,42 @@
 defmodule WechatMPAuth.Repo do
-  alias WechatMPAuth.RepoInsertable
+  alias WechatMPAuth.RepoInsertable, as: RI
 
-  defstruct [:db_name, :prefix_key, :store]
+  @type model :: WechatMPAuth.RepoInsertable
+  @type store :: WechatMPAuth.Store
+  @type t :: %__MODULE__{name: binary, store: store}
+  defstruct [:name, :store]
 
+  @spec insert(t, model) :: {:ok, binary}
   def insert(repo, model) do
-    with key <- RepoInsertable.key(model),
-       value <- RepoInsertable.value(model),
-         do: insert(repo, key, value)
+    with   key <- RI.key(model),
+          data <- RI.serialize(model),
+             _ <- data |> Enum.each(fn {k, v} -> insert(repo, key, k, v) end),
+      do: {:ok, key}
   end
 
-  def insert(%__MODULE__{store: store} = repo, key, value) do
-    case build_key(repo, key) |> store.set(value) do
+  @spec insert(t, binary, binary, binary) :: {:ok, binary}
+  def insert(%__MODULE__{store: store} = repo, key, attr_key, value) do
+    case build_key(repo, key, attr_key) |> store.set(value) do
       :ok -> {:ok, key}
       other -> other
     end
   end
 
-  def get(%__MODULE__{} = repo, model_or_key) do
-    with key <- RepoInsertable.key(model_or_key),
-         do: do_get(repo, key)
+  @spec get(t, model) :: model
+  def get(%__MODULE__{} = repo, model) do
+    with key <- RI.key(model),
+      fields <- RI.fields(model),
+      do: fields |> Enum.reduce(model, fn f, a -> %{a | f => get(repo, key, f)} end)
   end
 
-  defp do_get(%__MODULE__{store: store} = repo, key) do
-    case build_key(repo, key) |> store.get do
-      {:ok, nil} -> {:error, "cannot find value for #{key}"}
-      other -> other
-    end
+  @spec get(t, binary, binary) :: binary
+  def get(%__MODULE__{store: store} = repo, key, attr_key) do
+    {:ok, value} = build_key(repo, key, attr_key) |> store.get
+    value
   end
 
-  defp build_key(%__MODULE__{db_name: db_name, prefix_key: prefix_key}, key) do
-    [db_name, prefix_key, key]
+  defp build_key(%__MODULE__{name: name}, key, attr_key) do
+    [name, key, attr_key]
     |> Enum.reject(&(is_nil(&1)))
     |> Enum.join(":")
   end

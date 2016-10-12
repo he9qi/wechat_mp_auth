@@ -1,6 +1,7 @@
 defmodule WechatMPAuth.RedisStore do
   @use WechatMPAuth.Store
 
+  # TODO: throws Redix.Error
   def set(key, value) do
     {:ok, _} = Redix.command(:redix, ["SET", key, value])
     :ok

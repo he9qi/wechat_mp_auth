@@ -7,15 +7,15 @@ defmodule WechatMPAuth.RouterTest do
   @client_id         Application.get_env(:wechat_mp_auth, :client_id)
   @redirect_uri      Application.get_env(:wechat_mp_auth, :redirect_uri)
   @entity_id         "entity_12345"
-  @verify_ticket_key "#{@db_prefix}:component_verify_ticket:#{@client_id}"
-  @c_a_token_key     "#{@db_prefix}:authorizer:#{@entity_id}:component_access_token"
-  @a_a_token_key     "#{@db_prefix}:authorizer:#{@entity_id}:authorizer_access_token"
-  @a_r_token_key     "#{@db_prefix}:authorizer:#{@entity_id}:authorizer_refresh_token"
-  @a_app_id_key      "#{@db_prefix}:authorizer:#{@entity_id}:authorizer_app_id"
-  @a_name_key        "#{@db_prefix}:authorizer:#{@entity_id}:authorizer_name"
+  @verify_ticket_key "#{@db_prefix}:component_verify_ticket:#{@client_id}:ticket"
+  @c_a_token_key     "#{@db_prefix}:authorizer_info:#{@entity_id}:component_access_token"
+  @a_a_token_key     "#{@db_prefix}:authorizer_info:#{@entity_id}:access_token"
+  @a_r_token_key     "#{@db_prefix}:authorizer_info:#{@entity_id}:refresh_token"
+  @a_app_id_key      "#{@db_prefix}:authorizer_info:#{@entity_id}:app_id"
+  @a_name_key        "#{@db_prefix}:authorizer_info:#{@entity_id}:name"
   @verify_ticket_val "ticket@@123"
   @auth_code         "auth_code12345"
-  @component_access_token "component-access-token-1234"
+  @comp_access_token "component-access-token-1234"
   @refresh_token     "refreshtoken@@@12345"
   @a_app_id          "wxabcde"
   @authorizer_name   "Lafanyi App"
@@ -23,7 +23,7 @@ defmodule WechatMPAuth.RouterTest do
   describe "handles wechat authorization callback" do
     setup do
       Redix.command(
-        :redix, ~w(SET #{@c_a_token_key} #{@component_access_token})
+        :redix, ~w(SET #{@c_a_token_key} #{@comp_access_token})
       )
       on_exit fn ->
         Redix.command(:redix, ~w(DEL #{@a_a_token_key}))
@@ -101,7 +101,7 @@ defmodule WechatMPAuth.RouterTest do
       {:ok, component_access_token} =
         Redix.command(:redix, ~w(GET #{@c_a_token_key}))
 
-      assert "component-access-token-1234" == component_access_token
+      assert @comp_access_token == component_access_token
     end
   end
 end

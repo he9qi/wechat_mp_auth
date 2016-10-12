@@ -9,6 +9,7 @@ defmodule WechatMPAuth.Router do
   alias WechatMPAuth.Client
   alias WechatMPAuth.AuthorizerAccessToken, as: AAT
   alias WechatMPAuth.ComponentAccessToken, as: CAT
+  alias WechatMPAuth.AuthorizerInfo, as: AI
 
   @authorizer Application.get_env(:wechat_mp_auth, :authorizer)
   @client_id  Application.get_env(:wechat_mp_auth, :client_id)
@@ -20,14 +21,14 @@ defmodule WechatMPAuth.Router do
 
   get "/auth/wx/:source" do
     result =
-      with   client <- ClientFactory.create_client(source),
-               repo <- %Repo{store: RedisStore, db_name: @db_prefix},
-      {:ok, %CVT{ComponentVerifyTicket: ticket}} <- CVT.load(@client_id, repo),
-      {client, url} <- @authorizer.get_authorize_url(client, verify_ticket: ticket),
-      %Client{params: %{"component_access_token" => token}} <- client,
-          comp_repo <- %{repo | prefix_key: "authorizer:#{source}"},
-           {:ok, _} <- Repo.insert(comp_repo, "component_access_token", token),
-           do: {:ok, url}
+        with   client <- ClientFactory.create_client(source),
+                 repo <- %Repo{name: @db_prefix, store: RedisStore},
+ %CVT{ticket: ticket} <- Repo.get(repo, %CVT{app_id: @client_id}),
+        {client, url} <- @authorizer.get_authorize_url(client, verify_ticket: ticket),
+        %Client{params: %{"component_access_token" => token}} <- client,
+      authorizer_info <- %AI{component_access_token: token, source: source},
+             {:ok, _} <- Repo.insert(repo, authorizer_info),
+             do: {:ok, url}
     case result do
       {:ok, url} ->
         conn
@@ -43,15 +44,14 @@ defmodule WechatMPAuth.Router do
     result =
       with  client <- ClientFactory.create_client(source),
   {:ok, auth_code} <- conn.params |> Dict.fetch("auth_code"),
-              repo <- %Repo{store: RedisStore, db_name: @db_prefix, prefix_key: "authorizer:#{source}"},
-   {:ok, ca_token} <- Repo.get(repo, "component_access_token"),
+              repo <- %Repo{name: @db_prefix, store: RedisStore},
+   authorizer_info <- %AI{source: source},
+ %AI{component_access_token: ca_token} = authorizer_info <- Repo.get(repo, authorizer_info),
                cat <- CAT.new(ca_token, client),
       {:ok, %AAT{access_token: access_token, refresh_token: refresh_token, appid: app_id} = aat} <- @authorizer.get_authorizer_access_token(client, [authorization_code: auth_code, component_access_token: ca_token]),
 %{ "authorizer_info" => %{ "nick_name" => name }} <- @c_a_token.post!(cat, "/component/api_get_authorizer_info", %{component_appid: @client_id, authorizer_appid: app_id}).body,
-      {:ok, _} <- Repo.insert(repo, "authorizer_access_token", access_token),
-      {:ok, _} <- Repo.insert(repo, "authorizer_refresh_token", refresh_token),
-      {:ok, _} <- Repo.insert(repo, "authorizer_app_id", app_id),
-      {:ok, _} <- Repo.insert(repo, "authorizer_name", name),
+   authorizer_info <- %{authorizer_info | access_token: access_token, refresh_token: refresh_token, app_id: app_id, name: name},
+          {:ok, _} <- Repo.insert(repo, authorizer_info),
       do: {:ok, aat}
 
     case result do
