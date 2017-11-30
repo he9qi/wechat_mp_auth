@@ -25,7 +25,7 @@ defmodule WechatMp.Mixfile do
   end
 
   defp deps do
-    [{:cowboy, "~> 1.0.0"},
+    [{:cowboy, "~> 1.1.2"},
      {:httpoison, "~> 0.13"},
      {:plug, "~> 1.0"},
      {:poison, "~> 2.0"},
