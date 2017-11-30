@@ -28,7 +28,7 @@ defmodule WechatMp.Mixfile do
     [{:cowboy, "~> 1.1.2"},
      {:httpoison, "~> 0.13"},
      {:plug, "~> 1.0"},
-     {:poison, "~> 2.2"},
+     {:poison, "~> 2.2 or ~> 3.0"},
      {:mimetype_parser, "~> 0.1"},
      {:redix, "0.4.0"},
 
