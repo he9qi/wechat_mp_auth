@@ -34,7 +34,7 @@ defmodule WechatMp.Mixfile do
 
      {:bypass, "~> 0.1", only: :test},
      {:excoveralls, "~> 0.3", only: :test},
-     {:con_cache, "~> 0.11.1"},
+     {:con_cache, "~> 0.12.0"},
 
      # docs dependencies
      {:earmark, "~>0.1", only: :dev},
