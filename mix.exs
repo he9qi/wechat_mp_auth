@@ -6,15 +6,15 @@ defmodule WechatMp.Mixfile do
   def project do
     [app: :wechat_mp_auth,
      version: @version,
-     package: package,
+     package: package(),
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      source_url: "https://github.com/he9qi/wechat_mp_auth",
      homepage_url: "https://github.com/he9qi/wechat_mp_auth",
-     description: description,
-     deps: deps,
-     docs: docs,
+     description: description(),
+     deps: deps(),
+     docs: docs(),
      elixirc_paths: elixirc_paths(Mix.env),
      test_coverage: [tool: ExCoveralls]]
   end
